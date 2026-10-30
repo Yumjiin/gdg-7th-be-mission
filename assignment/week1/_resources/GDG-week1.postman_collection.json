@@ -1,0 +1,87 @@
+{
+  "info": {
+    "name": "GDG 쇼핑몰 API (Week 1)",
+    "description": "GDG 백엔드 미션코스 1주차 — 위에서부터 순서대로 실행하세요. 서버를 재시작하면 데이터가 초기화되니 '1. 상품 등록'부터 다시 실행합니다.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ],
+  "item": [
+    {
+      "name": "1-1. [관리자] 상품 등록 - 사과",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"사과\",\n  \"price\": 1500,\n  \"stock\": 30\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/admin/products", "host": ["{{baseUrl}}"], "path": ["admin", "products"] }
+      }
+    },
+    {
+      "name": "1-2. [관리자] 상품 등록 - 바나나",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"바나나\",\n  \"price\": 2000,\n  \"stock\": 10\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/admin/products", "host": ["{{baseUrl}}"], "path": ["admin", "products"] }
+      }
+    },
+    {
+      "name": "2. [소비자] 상품 조회",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/products?name=사과",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"],
+          "query": [{ "key": "name", "value": "사과" }]
+        }
+      }
+    },
+    {
+      "name": "3. [소비자] 상품 구매",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"items\": [\n    { \"productId\": 1, \"quantity\": 2 },\n    { \"productId\": 2, \"quantity\": 1 }\n  ]\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/orders", "host": ["{{baseUrl}}"], "path": ["orders"] }
+      }
+    },
+    {
+      "name": "4. [관리자] 재고 추가",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"quantity\": 20\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/admin/products/1/stock", "host": ["{{baseUrl}}"], "path": ["admin", "products", "1", "stock"] }
+      }
+    },
+    {
+      "name": "5. [관리자] 상품 삭제",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"productIds\": [1]\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/admin/products", "host": ["{{baseUrl}}"], "path": ["admin", "products"] }
+      }
+    },
+    {
+      "name": "(오류) 중복 상품 등록",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"바나나\",\n  \"price\": 1000,\n  \"stock\": 5\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/admin/products", "host": ["{{baseUrl}}"], "path": ["admin", "products"] }
+      }
+    },
+    {
+      "name": "(오류) 재고 부족 구매",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"items\": [\n    { \"productId\": 2, \"quantity\": 999 }\n  ]\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/orders", "host": ["{{baseUrl}}"], "path": ["orders"] }
+      }
+    }
+  ]
+}
