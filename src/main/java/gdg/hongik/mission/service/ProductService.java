@@ -3,13 +3,10 @@ package gdg.hongik.mission.service;
 import gdg.hongik.mission.dto.request.ProductCreateRequest;
 import gdg.hongik.mission.dto.request.ProductDeleteRequest;
 import gdg.hongik.mission.dto.request.PurchaseItemRequest;
-import gdg.hongik.mission.dto.request.PurchaseRequest;
 import gdg.hongik.mission.dto.request.StockUpdateRequest;
 import gdg.hongik.mission.dto.response.ProductResponse;
-import gdg.hongik.mission.dto.response.ProductStockResponse;
 import gdg.hongik.mission.dto.response.PurchaseResponse;
 import gdg.hongik.mission.dto.response.PurchasedProductResponse;
-import gdg.hongik.mission.dto.response.RemainingProductsResponse;
 import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,61 +31,64 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    // 상품 조회
+    // 전체 상품 목록 조회
+    public List<ProductResponse> findAll() {
+        return productRepository.findAll().stream()
+                .map(ProductResponse::from)
+                .toList();
+    }
+
+    // 상품명 단건 검색
     public ProductResponse findByName(String name) {
-        Product product = productRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + name));
-        return ProductResponse.from(product);
+        return ProductResponse.from(findEntityByName(name));
     }
 
     // 상품 등록
     @Transactional
     public ProductResponse register(ProductCreateRequest request) {
-        // [1주차 리뷰 반영] name·price·stock 누락 또는 음수면 저장 전에 막는다
-        if (request.name() == null || request.name().isBlank()) {
-            throw new RuntimeException("상품명은 필수입니다.");
-        }
+        validateName(request.name());
         if (request.price() == null || request.price() < 0) {
             throw new RuntimeException("가격은 0 이상이어야 합니다.");
         }
         if (request.stock() == null || request.stock() < 0) {
             throw new RuntimeException("재고는 0 이상이어야 합니다.");
         }
+        if (request.category() == null) {
+            throw new RuntimeException("카테고리는 필수입니다. (의류, 전자기기, 화장품, 식품 중 하나)");
+        }
         if (productRepository.existsByName(request.name())) {
             throw new RuntimeException("이미 존재하는 상품명입니다: " + request.name());
         }
 
-        Product saved = productRepository.save(new Product(request.name(), request.price(), request.stock()));
+        Product saved = productRepository.save(
+                new Product(request.name(), request.price(), request.stock(), request.category()));
         return ProductResponse.from(saved);
     }
 
-    // 재고 추가 — save() 없이 값만 바꿔도, 트랜잭션이 끝날 때 더티 체킹으로 UPDATE가 나간다
+    // 재고 추가 (상품명 기준) — save() 없이 값만 바꿔도 트랜잭션이 끝날 때 더티 체킹으로 UPDATE
     @Transactional
-    public ProductStockResponse addStock(Long productId, StockUpdateRequest request) {
+    public ProductResponse addStock(StockUpdateRequest request) {
         if (request.quantity() == null || request.quantity() < 1) {
             throw new RuntimeException("추가 수량은 1 이상이어야 합니다.");
         }
-        Product product = findById(productId);
+        Product product = findEntityByName(request.name());
         product.setStock(product.getStock() + request.quantity());
-        return ProductStockResponse.from(product);
+        return ProductResponse.from(product);
     }
 
-    // 상품 구매 — 중간에 예외가 나면 트랜잭션 전체가 롤백된다
+    // 장바구니 상품 일괄 구매 — 중간에 예외가 나면 트랜잭션 전체가 롤백된다
     @Transactional
-    public PurchaseResponse order(PurchaseRequest request) {
-        List<PurchaseItemRequest> items = request.items();
+    public PurchaseResponse purchase(List<PurchaseItemRequest> items) {
         if (items == null || items.isEmpty()) {
             throw new RuntimeException("구매할 상품이 없습니다.");
         }
 
-        // 0단계: 입력 검증 + 상품별 수량 합산
-        // [1주차 리뷰 반영] 같은 productId가 여러 번 들어와도 합계로 재고를 검증한다
+        // 0단계: 입력 검증 + 상품별 수량 합산 (같은 id가 여러 번 들어와도 합계로 재고 검증)
         Map<Long, Integer> quantityByProductId = new LinkedHashMap<>();
         for (PurchaseItemRequest item : items) {
             if (item.productId() == null) {
                 throw new RuntimeException("상품 ID는 필수입니다.");
             }
-            // [1주차 리뷰 반영] quantity 누락 시 NPE 대신 명확한 메시지
             if (item.quantity() == null || item.quantity() < 1) {
                 throw new RuntimeException("구매 수량은 1 이상이어야 합니다.");
             }
@@ -98,7 +98,7 @@ public class ProductService {
         // 1단계: 전부 검증 — 하나라도 문제가 있으면 재고를 건드리지 않고 중단
         Map<Product, Integer> checked = new LinkedHashMap<>();
         for (Map.Entry<Long, Integer> entry : quantityByProductId.entrySet()) {
-            Product product = findById(entry.getKey());
+            Product product = findEntityById(entry.getKey());
             int quantity = entry.getValue();
             if (product.getStock() < quantity) {
                 throw new RuntimeException("재고가 부족합니다: " + product.getName());
@@ -122,30 +122,30 @@ public class ProductService {
         return new PurchaseResponse(totalPrice, purchased);
     }
 
-    // 상품 삭제 — 남아 있는 상품 목록을 반환
+    // 상품 삭제 (상품명 기준) — 남아 있는 전체 상품 목록을 반환
     @Transactional
-    public RemainingProductsResponse delete(ProductDeleteRequest request) {
-        List<Long> productIds = request.productIds();
-        if (productIds == null || productIds.isEmpty()) {
-            throw new RuntimeException("삭제할 상품 ID가 없습니다.");
-        }
-        // 존재하지 않는 ID가 섞여 있으면 아무것도 지우지 않고 중단
-        for (Long id : productIds) {
-            findById(id);
-        }
-        productRepository.deleteAllById(productIds);
-
-        List<ProductStockResponse> remaining = productRepository.findAll().stream()
-                .map(ProductStockResponse::from)
-                .toList();
-        return new RemainingProductsResponse(remaining);
+    public List<ProductResponse> delete(ProductDeleteRequest request) {
+        Product product = findEntityByName(request.name());
+        productRepository.delete(product);
+        return findAll();
     }
 
-    private Product findById(Long id) {
-        if (id == null) {
-            throw new RuntimeException("상품 ID는 필수입니다.");
-        }
+    // ---- 내부 헬퍼 ----
+
+    private Product findEntityByName(String name) {
+        validateName(name);
+        return productRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + name));
+    }
+
+    private Product findEntityById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. id=" + id));
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new RuntimeException("상품명은 필수입니다.");
+        }
     }
 }
