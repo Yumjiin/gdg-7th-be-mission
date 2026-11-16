@@ -7,10 +7,10 @@ plugins {
 group = 'gdg.hongik'
 version = '0.0.1-SNAPSHOT'
 
+// [배포] toolchain(17) 대신 소스·타깃 버전만 지정 — Railway(Railpack)는 JDK 21 환경이라 JDK 17을 찾지 못해 빌드가 실패하는 것을 방지
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -21,9 +21,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-h2console'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3' // Swagger (튜토리얼에는 없지만 지우면 안 됨)
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j' // [배포] Railway MySQL 드라이버
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testCompileOnly 'org.projectlombok:lombok'
@@ -33,4 +34,19 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// [배포] plain.jar 생성 방지 — 실행 가능한 jar 하나만 만든다
+jar {
+	enabled = false
+}
+
+// [배포] Railpack(Railway)의 기본 실행 명령어(*/build/libs/*jar) 경로 호환 설정
+tasks.named('bootJar') {
+	doLast {
+		copy {
+			from archiveFile
+			into layout.buildDirectory.dir("build/libs")
+		}
+	}
 }
