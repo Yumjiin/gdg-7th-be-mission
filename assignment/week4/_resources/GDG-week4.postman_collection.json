@@ -1,0 +1,1313 @@
+{
+  "info": {
+    "name": "GDG 쇼핑몰 API (4주차 유효성 검사·예외 처리)",
+    "description": "4주차 리팩토링 확인용. 0 → 1 → 2 → 3 → 4 순서로 실행한다.\n각 요청에 상태 코드 테스트가 들어 있어서, 실행하면 Test Results 탭에 PASS/FAIL이 표시된다.\n로컬 확인 시 컬렉션 Variables의 baseUrl을 http://localhost:8080으로 바꾼다.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://gdg-7th-be-mission-production-0be1.up.railway.app"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. 샘플 데이터 등록 (세션 전 1회)",
+      "item": [
+        {
+          "name": "원피스 (의류)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"원피스\",\n  \"price\": 1000,\n  \"quantity\": 13,\n  \"category\": \"의류\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "청바지 (의류)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"청바지\",\n  \"price\": 200,\n  \"quantity\": 7,\n  \"category\": \"의류\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "무선이어폰 (전자기기)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"무선이어폰\",\n  \"price\": 89000,\n  \"quantity\": 20,\n  \"category\": \"전자기기\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "립밤 (화장품)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"립밤\",\n  \"price\": 5000,\n  \"quantity\": 30,\n  \"category\": \"화장품\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "바나나 (식품)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"바나나\",\n  \"price\": 3000,\n  \"quantity\": 50,\n  \"category\": \"식품\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. 소비자 API",
+      "item": [
+        {
+          "name": "1-1. 전체 상품 목록 조회",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1-2. 상품명 단건 검색",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products?itemName=원피스",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "itemName",
+                  "value": "원피스"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1-3. 장바구니 상품 일괄 구매",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "id는 실제 등록된 상품 id에 맞춰야 한다. 1-1 전체 조회 결과에서 확인.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": 1,\n    \"count\": 2\n  },\n  {\n    \"id\": 2,\n    \"count\": 1\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. 관리자 API",
+      "item": [
+        {
+          "name": "2-1. 상품 등록 (삭제 테스트용)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "샘플 데이터를 지우지 않도록, 삭제 테스트용 상품을 따로 등록한다.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"테스트상품\",\n  \"price\": 100,\n  \"quantity\": 1,\n  \"category\": \"식품\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2-2. 재고 추가",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "stock"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"원피스\",\n  \"quantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2-3. 상품 삭제 (테스트상품)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"테스트상품\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. 비즈니스 예외 (3주차 500 → 4주차 404·409)",
+      "item": [
+        {
+          "name": "중복 상품명 → 409",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 409 DUPLICATE_PRODUCT_NAME",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"원피스\",\n  \"price\": 1000,\n  \"quantity\": 1,\n  \"category\": \"의류\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"오류 코드 DUPLICATE_PRODUCT_NAME\", () => pm.expect(pm.response.json().code).to.eql(\"DUPLICATE_PRODUCT_NAME\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "없는 상품 검색 → 404",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products?itemName=없는상품",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "itemName",
+                  "value": "없는상품"
+                }
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 404 PRODUCT_NOT_FOUND",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"오류 코드 PRODUCT_NOT_FOUND\", () => pm.expect(pm.response.json().code).to.eql(\"PRODUCT_NOT_FOUND\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "재고 부족 구매 → 409",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 409 OUT_OF_STOCK. 재고는 바뀌지 않아야 한다 (전체 조회로 확인)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": 1,\n    \"count\": 9999\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"오류 코드 OUT_OF_STOCK\", () => pm.expect(pm.response.json().code).to.eql(\"OUT_OF_STOCK\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "없는 상품 ID 구매 → 404",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 404 PRODUCT_NOT_FOUND",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": 9999,\n    \"count\": 1\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"오류 코드 PRODUCT_NOT_FOUND\", () => pm.expect(pm.response.json().code).to.eql(\"PRODUCT_NOT_FOUND\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "없는 상품 재고 추가 → 404",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "stock"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 404",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"없는상품\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"오류 코드 PRODUCT_NOT_FOUND\", () => pm.expect(pm.response.json().code).to.eql(\"PRODUCT_NOT_FOUND\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "없는 상품 삭제 → 404",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 404",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"없는상품\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"오류 코드 PRODUCT_NOT_FOUND\", () => pm.expect(pm.response.json().code).to.eql(\"PRODUCT_NOT_FOUND\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. 유효성 검사·요청 형식 오류 (400·404·405·415)",
+      "item": [
+        {
+          "name": "카테고리 누락 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "3주차: 500 → 4주차: 400 INVALID_INPUT (@NotNull)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"모자\",\n  \"price\": 10000,\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "상품명 빈 문자열 + 가격 음수 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "@NotBlank, @PositiveOrZero. 메시지 두 개가 함께 나온다",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \" \",\n  \"price\": -1,\n  \"quantity\": 3,\n  \"category\": \"의류\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "잘못된 카테고리 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "3주차에도 400이었지만 Spring 기본 형식 → 4주차: ErrorResponse 형식 INVALID_REQUEST_BODY",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"가방\",\n  \"price\": 10000,\n  \"quantity\": 3,\n  \"category\": \"가방\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_REQUEST_BODY\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_REQUEST_BODY\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JSON 문법 오류 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "JSON이 중간에 끊김",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"itemName\": \"모자\", ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_REQUEST_BODY\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_REQUEST_BODY\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "재고 추가 수량 0 → 400",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "stock"
+              ]
+            },
+            "description": "@Positive",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"원피스\",\n  \"quantity\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "구매 빈 배열 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "@NotEmpty (메서드 파라미터 검증)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "구매 count 0 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "List<@Valid ...> 배열 항목 검증",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"id\": 1,\n    \"count\": 0\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "구매 id 누락 → 400",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/products/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "purchase"
+              ]
+            },
+            "description": "@NotNull",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"count\": 1\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "단건 검색 itemName 빈 값 → 400",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products?itemName=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "itemName",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "@NotBlank @RequestParam",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "삭제 상품명 누락 → 400",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "@NotBlank",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"오류 코드 INVALID_INPUT\", () => pm.expect(pm.response.json().code).to.eql(\"INVALID_INPUT\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "없는 주소 → 404",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product"
+              ]
+            },
+            "description": "오타 경로. 500이 아니라 404 API_NOT_FOUND",
+            "header": []
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"오류 코드 API_NOT_FOUND\", () => pm.expect(pm.response.json().code).to.eql(\"API_NOT_FOUND\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "메서드 불일치 → 405",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "stock"
+              ]
+            },
+            "description": "재고 추가는 PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"원피스\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 405\", () => pm.response.to.have.status(405));",
+                  "pm.test(\"오류 코드 METHOD_NOT_ALLOWED\", () => pm.expect(pm.response.json().code).to.eql(\"METHOD_NOT_ALLOWED\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Content-Type 누락 → 415",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "Content-Type을 text/plain으로 보냄",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/plain"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"itemName\": \"모자\", \"price\": 1, \"quantity\": 1, \"category\": \"의류\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"상태 코드 415\", () => pm.response.to.have.status(415));",
+                  "pm.test(\"오류 코드 UNSUPPORTED_MEDIA_TYPE\", () => pm.expect(pm.response.json().code).to.eql(\"UNSUPPORTED_MEDIA_TYPE\"));",
+                  "pm.test(\"ErrorResponse 형식 (status, code, message)\", () => { const b = pm.response.json(); pm.expect(b).to.have.all.keys(\"status\", \"code\", \"message\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
